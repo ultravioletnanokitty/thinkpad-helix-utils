@@ -17,6 +17,9 @@
 set -e
 set -u
 
+# Whether to disable the wifi when going onto the docking station.
+disable_wifi=true
+
 # Find the user who is currently logged in on the primary screen.
 user="$(who -u | grep -F '(:0)' | head -n 1 | awk '{print $1}')"
 
@@ -25,9 +28,29 @@ logger -t think-dock -- "Using user $user."
 case "$1" in
 	on)
 		setto=on
+
+		# Disable the wireless connection, if the user specified the option,
+		# the ``nmcli`` tool is available and the computer is actually
+		# connected to the ethernet.
+		# HACK This is done here, since it does not work from within
+		# ``think-dock`` when it is called via this script here.
+		if [[ "$disable_wifi" = "true" ]] \
+			&& type nmcli > /dev/null 2>&1 \
+			&& [[ "$(cat "/sys/class/net/eth0/carrier")" = 1 ]]
+		then
+			nmcli nm wifi off
+		fi
 		;;
 	off)
 		setto=off
+
+		# Enable the wireless connection.
+		# HACK This is done here, since it does not work from within
+		# ``think-dock`` when it is called via this script here.
+		if [[ "$disable_wifi" = "true" ]] && type nmcli > /dev/null 2>&1
+		then
+			nmcli nm wifi on
+		fi
 		;;
 esac
 
