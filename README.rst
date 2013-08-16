@@ -11,25 +11,20 @@ ThinkPad Rotate
 .. contents::
     :local:
 
-This collection of scripts is intended for the Lenovo ThinkPad X220 Tablet. You
-can still use them with the regular X220 machine, but only ``think-rotate``
-will probably be useless for you then. I think that most scripts will also be
-handy for other ThinkPad models, I have not tested them though.
+This collection of scripts is intended for the Lenovo ThinkPad Helix Tablet. All the content was derived, in many cases directly copyed, from the extremely helpful project ``think-rotate`` maintained by Martin Ueding.
 
-The buttons on the front of the screen are mapped, so that you can use them. I
-have ``think-rotate`` on that 90° button and ``think-rotate flip`` on that 270°
-button.
+The ThinkPad Helix has relatively few dedicated buttons, compared to past ThinkPad models - particularly tablets.  The buttons currently mapped are:
+
+	- The rotate button on the right-hand side of the screen. It performs a ``think-rotate flip``.
+
+	- The volume rocker buttons on the right-hand side of the screen.
 
 In short, this script fixes or improves the following:
 
 #. Rotation of the internal screen and any Wacom touch and pen input devices
    using the bezel buttons.
 
-#. Get the microphone mute button to work. 
-#. Automatically use any external monitor, speakers and LAN connection when
-   docking onto an UltraBase or similar.
-
-#. Ability to disable touch pad or touch screen.
+The rest of this README hasn't been updated from Martin's documentation.  Need to work on this...
 
 the scripts
 ===========
