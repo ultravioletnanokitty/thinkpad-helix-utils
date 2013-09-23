@@ -1,7 +1,7 @@
 .. Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
 ###############
-ThinkPad Rotate
+Helix Utils
 ###############
 
 :License (Code): GPLv2_
@@ -92,6 +92,6 @@ This entire project is licensed under GPL Version 2.
 Contact
 =======
 
-My name is <a href="http://www.derekruths.com">Derek Ruths</a>. Please feel free to <a href="mailto:druths@networkdynamics.org">contact me</a> with any questions, issues, or feature requests.  I'll be continuing to work on adding support for additional features of the helix over time.
+My name is Derek Ruths <http://www.derekruths.com>. Please feel free to contact me <mailto:druths@networkdynamics.org> with any questions, issues, or feature requests.  I'll be continuing to work on adding support for additional features of the helix over time.
 
 .. vim: spell
