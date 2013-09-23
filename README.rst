@@ -24,7 +24,7 @@ In short, this project fixes or improves the following:
    handling working.
 
 
-the scripts
+The scripts
 ===========
 
 think-rotate
@@ -38,7 +38,7 @@ so that the back of the screen does not move your mouse if there is any force
 on the side of the screen.
 
 
-the Ubuntu applications
+The Ubuntu applications
 ======================
 
 helix-rotate
@@ -56,7 +56,7 @@ This script is also provided to show how one might create applications that more
 
 
 Fixes for quirky problems
--------------------------
+=========================
 
 The X-server evdev input driver that ships with Ubuntu 13.04 will occasionally cease processing touch down events (it will still process touch up events, though, for whatever reason).  This bug will render the touch interface both frustrating and pointless.  To fix this, all that appears to be required is to install a more recent version of the X-server evdev input driver.  The details about how to do this will be written up in a blog entry and linked from here.
 
