@@ -1,113 +1,13 @@
-.. Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
+.. Copyright © 2013-2014 Derek Ruths <druths@networkdynamics.org>
+.. This project was derived in significant part from the think-rotate project maintained by Martin Ueding <dev@martin-ueding.de>
 
 #########
 Changelog
 #########
 
-v2.7
-    - **Added**: Hooks
-    - **Added**: ``on|off`` for the ``think-touchpad`` script
-
-v2.6
-    - Support for ``kdialog`` status.
-
-v2.5.2
-    - Update the ACPI hooks to find other docks as well
-
-v2.5.1
-    - Find other docks as well
-
-v2.5
-    - Get microphone mute button to work
-
-v2.4.1
-    - Actually install makefiles
-    - Implement required actions in ``init.d`` script to that Debian lintian
-      does not complain
-
-v2.4
-    - Fix bezel keyboard codes, so that they are usable. (Jim Turner)
-    - Add script to toggle touch screen. (Jim Turner)
-    - Organize code in subdirectories, using recursive make.
-
-v2.3.1
-    - Map Wacom devices to the output when rotating in any case. Thanks to Jim
-      Turner!
-
-v2.3
-    - Add support for other virtual keyboards. Thanks to Jim Turner!
-    - Use shorter redirection (``&>`` instead of ``2>&!``).
-
-v2.2.1
-    - Fix spelling typo in ``relative_position``. Thanks to Jim Turner!
-
-v2.2
-    - Background most tasks so that they run in parallel. This should speed up
-      docking.
-
-v2.1
-    - Only set Wacom screen devices. That way, any attached Wacom graphics
-      tablet is not affected by the docking.
-
-v2.0
-    - Use the kernel to determine what the docking status is.
-    - Add ``udev`` rules to perform the docking action.
-
-v1.5
-    - Desktop files for think-dock.
-
-v1.4.3
-    - Disable the wireless connection on docking.
-
-v1.4.2
-    - Fix commands in ``.desktop`` files.
-
-v1.4.1
-    - Install ``.desktop`` files.
-
-v1.4
-    - Query the state of the whole system automatically and determine the right
-      action. You can still specify ``on`` or ``off``, if you want to.
-
-v1.3
-    - Optional config file for ``think-dock``.
-
-v1.2.2
-    - Fix flip direction.
-
-v1.2.1
-    - Disable wireless only when eth0 connected.
-    - Document options.
-
-v1.2
-    - Change display brightness on docking.
-
-v1.1
-    - Check whether programs are there before using them.
-    - Create directories on ``make install``.
-    - Disable wifi when going onto the docking station.
-    - Enable sound on docking.
-    - Lower the volume after docking.
-    - Query Wacom devices automatically.
-
-v1.0
-    This is the first release with a version number. It contains a couple fixes
-    and improvements compared to previous (before 2012-07-13) versions of these
-    scripts.
-
-    - Accept other names for the rotation.
-    - Disable the trackpad as well.
-    - Start and stop the virtual keyboard.
-    - Try to go back automatically, if a rotation is already set.
-    - Use ``--rotation`` instead of ``-o``. This will only rotate the internal
-      screen and not any attached screens as well.
-
-Way before 2012-07-13, those are significant changes in the history:
-
-- Add desktop files.
-- Also set Wacom hardware correctly.
-- Determine resolution automatically.
-- Disable trackpoint when switching.
-- Dynamically find external display.
-- Limit Wacom devices to internal screen.
-- Set external monitor as primary.
+v1.0 (Sept. 2013)
+	- Forked from Marin Ueding's think-rotate project on github
+	- Implemented helix-rotate script (a version of think-rotate, 
+	  but specialized to the Lenovo Helix)
+	- Documented a tentative fix to the loss of ButtonDown 
+	  events through touchscreen.

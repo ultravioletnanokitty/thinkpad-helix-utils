@@ -1,9 +1,9 @@
 [Desktop Entry]
 Categories=System;
-Exec=think-rotate flip
-GenericName=Flip screen vertically
-Icon=object-flip-vertical
-Name=rotate flip
+Exec=helix-rotate
+GenericName=Rotate screen 
+Icon=object-rotate-right
+Name=Rotate Screen
 NoDisplay=true
 StartupNotify=false
 Terminal=false

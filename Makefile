@@ -1,4 +1,6 @@
-# Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2012-2013, Derek Ruths <druths@networkdynamics.org>
+
+# This script was derived extensively from one developed and provided by Martin Ueding <dev@martin-ueding.de>
 
 SHELL = /bin/bash
 
@@ -10,15 +12,6 @@ all:
 	make -C doc
 
 install:
-	install -d "$(DESTDIR)/lib/udev/rules.d/"
-	install -m 644 81-thinkpad-dock.rules -t "$(DESTDIR)/lib/udev/rules.d/"
-#
-	install -d "$(DESTDIR)/etc/pm/sleep.d/"
-	install 00_think-resume.sh -t "$(DESTDIR)/etc/pm/sleep.d/"
-#
-	install -d "$(DESTDIR)/etc/acpi/events/"
-	install think-mutemic-acpi-hook -t "$(DESTDIR)/etc/acpi/events/"
-#
 	make -C bin install
 	make -C desktop install
 	make -C doc install

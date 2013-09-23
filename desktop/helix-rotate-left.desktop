@@ -1,9 +1,9 @@
 [Desktop Entry]
 Categories=System;
-Exec=think-rotate
+Exec=helix-rotate left
 GenericName=Rotate screen left
-Icon=object-rotate-right
-Name=rotate
+Icon=object-rotate-left
+Name=Rotate Screen Left
 NoDisplay=true
 StartupNotify=false
 Terminal=false
