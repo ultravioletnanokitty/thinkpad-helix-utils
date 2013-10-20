@@ -1,9 +1,9 @@
 [Desktop Entry]
 Categories=System;
-Exec=helix-rotate left
-GenericName=Rotate screen left
-Icon=object-rotate-left
-Name=Rotate Screen Left
+Exec=helix-toggle-touch
+GenericName=Toggle touch
+Icon=white-black-hand
+Name=Toggle Touch
 NoDisplay=true
 StartupNotify=false
 Terminal=false
