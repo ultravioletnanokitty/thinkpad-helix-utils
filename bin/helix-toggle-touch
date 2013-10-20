@@ -3,12 +3,14 @@
 # This script toggles the state of the touchscreen device on the
 # Lenovo Helix.
 
+# check for the device
 device="Atmel Atmel maXTouch Digitizer"
 device_found=$(xinput | grep "$device" | wc -l)
 
 if [ $device_found -ne 1 ]
 then
 	echo "touch device not found"
+	kdialog ---title "Toggle Touch" --passivepopup "No touch device found." 2 
 	exit
 fi
 
@@ -17,11 +19,14 @@ state=$(xinput list-props "$device" | grep "Device Enabled" | sed -n 's/.*\([0-9
 new_state=$(echo "1-$state" | bc)
 
 # set the new value
+xinput set-prop "$device" "Device Enabled" $new_state
+
 if [ $new_state -eq 0 ]
 then
-	echo "toggling touch off"
+	echo "toggled touch off"
+	kdialog --title "Toggle Touch" --passivepopup "Touch turned off." 2 
 else
-	echo "toggling touch on"
+	echo "toggled touch on"
+	kdialog --title "Toggle Touch" --passivepopup "Touch turned on." 2 
 fi
 
-xinput set-prop "$device" "Device Enabled" $new_state
