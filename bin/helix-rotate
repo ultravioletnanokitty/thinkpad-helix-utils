@@ -1,9 +1,40 @@
 #!/bin/bash
 
+# This script will rotate the helix screen.  Command options are:
+# 
+# [-nkbd] [orientation]
+#
+# where -nkbd will keep the virtual keyboard from being displayed
+# and orientation is either normal, left, right, inverted.
+#
 # Script orignally from http://forum.thinkpads.com/viewtopic.php?p=676101#p676101. Subsequently, it was edited and improved by Martin Ueding <dev@martin-ueding.de>
 # Changes Copyright © 2013-2014 Derek Ruths <druths@networkdynamics.org>
 
 set -e
+
+######
+# Parse command line options
+######
+
+use_kbd=1
+
+for arg in $@
+do
+	if [[ $arg -eq "-nkbd" ]]
+	then
+		use_kbd=0
+		break
+	fi
+
+done
+
+if [[ $use_kbd == 0 ]]; then
+	args=$@
+	declare -a args=( ${args[@]/-nkbd*/} )
+else
+	args=$@
+fi
+echo $args 
 
 ###############################################################################
 #                                   options                                   #
@@ -54,17 +85,22 @@ echo "Inferring new rotation..."
 
 # If the user specified a rotation, set it to that. If not, use left or default
 # orientation.
-if [[ -n "$1" ]]
+
+if [[ ${#args[@]} > 0 ]]; then
+	orientation=${args[0]}
+fi
+
+if [[ -n "$orientation" ]]
 then
 	# The users specified a rotation. Set the screen to that state if the
 	# current state is not the desired one. If the desired one is the current,
 	# go back. This allows to toggle with the same call.
-	if [[ "$1" = "$rotation" ]]
+	if [[ "$orientation" = "$rotation" ]]
 	then
 		echo "You try to rotate into the direction it is, reverting to normal."
 		setto=normal
 	else
-		setto="$1"
+		setto="$orientation"
 		echo "User chose to set to $setto."
 	fi
 else
@@ -118,6 +154,10 @@ xinput set-prop 'Atmel Atmel maXTouch Digitizer' 'Coordinate Transformation Matr
 ###############################################################################
 #                              virtual keyboard                               #
 ###############################################################################
+
+if [ $use_kbd = 0 ] ; then
+	exit
+fi
 
 echo "Starting or killing virtual keyboard..."
 
