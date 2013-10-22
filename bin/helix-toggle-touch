@@ -2,6 +2,15 @@
 
 # This script toggles the state of the touchscreen device on the
 # Lenovo Helix.
+# 
+# The command takes the argument -noui to suppress notification of
+# touch device enable/disablement using UI notifications.
+
+use_ui=1
+if [[ $1 == "-noui" ]]; then
+	# don't show the ui elements
+	use_ui=0
+fi
 
 # check for the device
 device="Atmel Atmel maXTouch Digitizer"
@@ -10,7 +19,10 @@ device_found=$(xinput | grep "$device" | wc -l)
 if [ $device_found -ne 1 ]
 then
 	echo "touch device not found"
-	kdialog ---title "Toggle Touch" --passivepopup "No touch device found." 2 
+	if [ $use_ui == 1 ]; then
+		kdialog ---title "Toggle Touch" --passivepopup "No touch device found." 2 
+	fi
+
 	exit
 fi
 
@@ -24,9 +36,15 @@ xinput set-prop "$device" "Device Enabled" $new_state
 if [ $new_state -eq 0 ]
 then
 	echo "toggled touch off"
-	kdialog --title "Toggle Touch" --passivepopup "Touch turned off." 2 
+
+	if [ $use_ui -eq 1 ]; then
+		kdialog --title "Toggle Touch" --passivepopup "Touch turned off." 2 
+	fi
 else
 	echo "toggled touch on"
-	kdialog --title "Toggle Touch" --passivepopup "Touch turned on." 2 
+
+	if [ $use_ui -eq 1 ]; then
+		kdialog --title "Toggle Touch" --passivepopup "Touch turned on." 2 
+	fi
 fi
 

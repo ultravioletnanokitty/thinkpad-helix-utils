@@ -4,7 +4,7 @@
 # 
 # [-nkbd] [orientation]
 #
-# where -nkbd will keep the virtual keyboard from being displayed
+# where -nokbd will keep the virtual keyboard from being displayed
 # and orientation is either normal, left, right, inverted.
 #
 # Script orignally from http://forum.thinkpads.com/viewtopic.php?p=676101#p676101. Subsequently, it was edited and improved by Martin Ueding <dev@martin-ueding.de>
