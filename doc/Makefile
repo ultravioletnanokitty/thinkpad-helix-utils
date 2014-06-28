@@ -1,5 +1,3 @@
-# Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
-
 SHELL = /bin/bash
 
 .PHONY: all install clean

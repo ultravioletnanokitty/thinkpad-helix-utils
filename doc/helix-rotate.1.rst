@@ -1,60 +1,48 @@
-.. Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
-
 ############
-think-rotate
+helix-rotate
 ############
 
-*******************************************
-ThinkPad X220 Tablet screen rotation script
-*******************************************
+********************************************
+ThinkPad Helix Tablet screen rotation script
+********************************************
 
-:Author: Martin Ueding <dev@martin-ueding.de>
-:Date: 2012-06-08
+:Author: ultraviolet <ultravioletnanokitty@gmail.com>
+:Date: 2014-06-28
 :Manual section: 1
 
 SYNOPSIS
 ========
 
-::
-
-    think-rotate [direction]
+:: helix-rotate [direction]
 
 DESCRIPTION
 ===========
 
-If you want to use your X220 Tablet as a tablet, you might want to rotate the
-screen. You can use this script for that and it will ensure that the pen and
-touch interface know about the rotated screen.
+This script will rotate the Lenovo ThinkPad Helix's display, pen, and touch 
+to the orientation specified. 
 
-It will also disable the trackpoint (the xinput id is automatically queried) so
-that the back of the screen does not move your mouse if there is any force on
-the side of the screen.
+If the current orientation is specified, the screen will be reverted to the
+orientation listed in the config file (normal by default). That way, you can 
+use this script as a toggle.
 
-Finally, it will start the virtual keyboard (``kvkbd`` by default) when the
-screen is rotated and kill it when the screen is rotated back to normal.
+If no orientation is specified, the screen will be rotated clockwise 90 degrees.
 
-If the screen is already rotated (say left) and you call ``think-rotate left``,
-the screen will be reverted to the normal orientation. That way, you can use
-this script as a toggle.
+You can also place hook scripts in a configurable location, to be run before or
+after the screen is rotated.
 
 OPTIONS
 =======
 
-direction
-    The direction can be any of:
+orientation
+    The orientation can be any of:
 
-    - ccw
-    - cw
-    - flip
-    - half
-    - left
-    - none
-    - normal
-    - right
+-	normal (or none)
+-	right (or cw)
+-	inverted (or half or flip)
+-	left (or ccw)
 
-    Since the Wacom tools and ``xrandr`` have different names, this program
-    accepts all of them, so that you do not have to learn yet another set of
-    directions.
+    Since ``xsetwacom`` and ``xrandr`` use different orientation names, both
+    sets are accepted for convenience.
 
 EXIT STATUS
 ===========
@@ -65,10 +53,6 @@ EXIT STATUS
 2
     User specified a direction that is not known.
 
-ENVIRONMENT
-===========
-
-The script relies on ``xrandr`` to get the information, so this has to work.
 
 FILES
 =====
@@ -76,43 +60,46 @@ FILES
 Config
 ------
 
-You can create a config file in ``$HOME/.config/think-rotate/rotate.sh``, which
-is a simple Bash script that is going to be sourced from ``think-rotate``.
+The global config file for all of the ThinkPad Helix tools (including this one)
+is ``$HOME/.config/thinkpad-helix-utils/config``. Possible options include:
 
-A sample config would look like this::
+``output_name``
+	output used by the ThinkPad Helix's LCD
 
-    virtual_kbd="cellwriter"
+``touch_name``
+	the xinput name of the touch digitiser
 
-You can set the following option:
+``toggle_rotation``
+	the rotation to toggle to if current orientation is specified
+	
+``prerotate_hook``
+	the location of the script to run before rotating the screen
 
-``virtual_kbd``
-    Command to start the virtual keyboard.
+``postrotate_hook``
+	the location of the script to run after rotating the screen
 
 Hooks
 -----
 
-You can add scripts to be called before and after with the following files:
+The default locations of the pre- and post-rotate hooks are:
 
-- ``~/.config/think-rotate/hooks/prerotate``
-- ``~/.config/think-rotate/hooks/postrotate``
+- ``~/.config/thinkpad-helix-utils/prerotate.sh``
+- ``~/.config/thinkpad-helix-utils/postrotate.sh``
 
 EXAMPLE
 =======
 
-To rotate the screen to the right (and later back again), use::
+To rotate the screen to the right (and then inverted, left, normal, and so on)::
 
-    think-rotate
+    helix-rotate
 
-To specify the direction, you can use::
+To specify the direction (left in this case)::
 
-    think-rotate left
-    think-rotate right
-    think-rotate flip
-    think-rotate normal
+    helix-rotate left
 
 SEE ALSO
 ========
 
 - `GitHub Repository`_
 
-.. _`GitHub Repository`: https://github.com/martin-ueding/think-rotate
+.. _`GitHub Repository`: https://github.com/ultravioletnanokitty/thinkpad-helix-utils

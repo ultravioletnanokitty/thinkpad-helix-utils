@@ -1,123 +1,100 @@
 #!/bin/bash
 
-# This script will rotate the helix screen.  Command options are:
-# 
-# [-nkbd] [orientation]
+# This script will rotate the internal display and pen/touch input devices
+# on the Lenovo ThinkPad Helix.
 #
-# where -nokbd will keep the virtual keyboard from being displayed
-# and orientation is either normal, left, right, inverted.
+# Possible arguments are:
 #
-# Script orignally from http://forum.thinkpads.com/viewtopic.php?p=676101#p676101. Subsequently, it was edited and improved by Martin Ueding <dev@martin-ueding.de>
-# Changes Copyright © 2013-2014 Derek Ruths <druths@networkdynamics.org>
+#  normal (or none)
+#  right (or cw)
+#  inverted (or half or flip)
+#  left (or ccw)
+#
+# Script orignally from http://forum.thinkpads.com/viewtopic.php?p=676101 
+# Subsequently, it was edited and improved by: 
+#      Martin Ueding <dev@martin-ueding.de>
+#      Derek Ruths <druths@networkdynamics.org>
+#      ultraviolet <ultravioletnanokitty@gmail.com>
 
 set -e
 
-######
-# Parse command line options
-######
+#
+# Static options
+#
 
-use_kbd=1
+# The name of the output for the internal display
+output_name="eDP1" # output used by the ThinkPad Helix's LCD
 
-for arg in $@
-do
-	if [[ $arg -eq "-nkbd" ]]
-	then
-		use_kbd=0
-		break
-	fi
+# The xinput name of the touch digitiser
+touch_name="Atmel Atmel maXTouch Digitizer touch"
 
-done
+# The rotation to toggle to if current orientation is specified
+toggle_rotation="normal"
 
-if [[ $use_kbd == 0 ]]; then
-	args=$@
-	declare -a args=( ${args[@]/-nkbd*/} )
-else
-	args=$@
-fi
-echo $args 
+# Define pre/post rotate hook locations
+prerotate_hook="$HOME/.config/thinkpad-helix-utils/prerotate.sh"
+postrotate_hook="$HOME/.config/thinkpad-helix-utils/postrotate.sh"
 
-###############################################################################
-#                                   options                                   #
-###############################################################################
+# Import the configuration file if there is one. This will replace any options set above.
+configfile="$HOME/.config/thinkpad-helix-utils/config"
 
-# The name of the internal display.
-internal="eDP1" # this is for the Lenovo Helix
-
-# The name of the virtual keyboard.
-virtual_kbd="onboard" #kvkbd
-
-# Now import the configuration file if there is one. That will replace any
-# options set above.
-configfile="$HOME/.helix-utils/rotate.sh"
-
-prerotate_hook="$HOME/.helix-utils/hooks/prerotate"
-postrotate_hook="$HOME/.helix-utils/hooks/postrotate"
-
-if [[ -f "$configfile" ]]
-then
+if [[ -f "$configfile" ]]; then
 	source "$configfile"
 fi
 
-# executing pre-rotate hook
-if [[ -f "$prerotate_hook" ]]
-then
+#
+# determine current orientation
+#
+
+# Find the line in ``xrandr -q --verbose`` output that contains current screen orientation and strip out extraneous info
+orientation="$(xrandr -q --verbose | grep 'connected' | grep "$internal" | egrep -o  '\) (normal|left|inverted|right) \(' | egrep -o '(normal|left|inverted|right)')"
+
+echo "Current orientation is $orientation."
+
+#
+# set new rotation
+#
+
+# Execute pre-rotate hook
+if [[ -f "$prerotate_hook" ]]; then
 	echo "Executing pre-rotate hook..."
     "$prerotate_hook"
 fi
 
-###############################################################################
-#                               current status                                #
-###############################################################################
-
-echo "Finding the current rotation..."
-
-# Find the line in ``xrandr -q --verbose`` output that contains current screen
-# orientation and strip out current orientation.
-rotation="$(xrandr -q --verbose | grep 'connected' | grep "$internal" | egrep -o  '\) (normal|left|inverted|right) \(' | egrep -o '(normal|left|inverted|right)')"
-
-echo "Current status is $rotation."
-
-###############################################################################
-#                                new rotation                                 #
-###############################################################################
-
-echo "Inferring new rotation..."
-
-# If the user specified a rotation, set it to that. If not, use left or default
-# orientation.
-
+args=$@
 if [[ ${#args[@]} > 0 ]]; then
-	orientation=${args[0]}
+	rotation=${args[0]}
 fi
 
-if [[ -n "$orientation" ]]
-then
-	# The users specified a rotation. Set the screen to that state if the
-	# current state is not the desired one. If the desired one is the current,
-	# go back. This allows to toggle with the same call.
-	if [[ "$orientation" = "$rotation" ]]
-	then
-		echo "You try to rotate into the direction it is, reverting to normal."
-		setto=normal
+if [[ -n "$rotation" ]]; then
+	# If the specified state is the current one, toggle to specified orientation. This enables toggling rotation with one command.
+	if [[ "$orientation" = "$rotation" ]]; then
+		echo "Current orientation specified, reverting to $toggle_rotation."
+		rotation=$toggle_rotation
 	else
-		setto="$orientation"
-		echo "User chose to set to $setto."
+		echo "Setting screen orientation to $rotation."
 	fi
 else
-	# The user did not specify anything. Set it to right or revert.
-	case "$rotation" in
+	# No options were specified. Cycle orientations by default.
+	case "$orientation" in
 		normal)
-			setto=right
-			echo "Using default, setting to $setto."
+			rotation=right
 			;;
-		*)
-			setto=normal
-			echo "Using default, reverting to normal."
+		right)
+			rotation=inverted
+			;;
+		inverted)
+			rotation=left 
+			;;
+		left)
+			rotation=normal
+			;;
 	esac
+	echo "No options specified, cycling to $rotation by default"
 fi
 
 # Translate directions into ``xrandr`` and ``xsetwacom`` names.
-case "$setto" in
+case "$rotation" in
 	none|normal)
 		xrandr_rotation=normal
 		touch_rotation=(1 0 0 0 1 0 0 0 1)
@@ -135,94 +112,23 @@ case "$setto" in
 		touch_rotation=(0 -1 1 1 0 0 0 0 1)
 		;;
 	*)
-		echo "You specified a direction that is not known. Try either normal, right, flip or left. See helix-rotate(1) for more information."
+		echo "Unknown direction: $rotation. Try normal, right, inverted, or left."
 		exit 2
 esac
 
-# Perform the actual rotation.
-echo "Rotating screen..."
-xrandr --output "$internal" --rotate "$xrandr_rotation"
+echo "Rotating screen to $rotation"
 
-# There's no need to rotate the Wacom devices - they rotate by default since
-# they're managed by xinput.
+# Rotate display
+xrandr --output "$output_name" --rotate "$xrandr_rotation"
 
-# Rotate the touch-based pointer
-echo "Rotating touch devices..."
+# Rotate capacitive digitiser
+xinput set-prop "$touch_name" 'Coordinate Transformation Matrix' ${touch_rotation[@]}
 
-xinput set-prop 'Atmel Atmel maXTouch Digitizer' 'Coordinate Transformation Matrix' ${touch_rotation[@]} 
+# There's no need to rotate the Wacom devices - they rotate by default since they're managed by xinput.
 
-###############################################################################
-#                              virtual keyboard                               #
-###############################################################################
-
-if [ $use_kbd = 0 ] ; then
-	exit
+# Execute post-rotate hook
+if [[ -f "$postrotate_hook" ]]; then
+	echo "Executing post-rotate hook..."
+	"$postrotate_hook"
 fi
-
-echo "Starting or killing virtual keyboard..."
-
-# get the new screen resolution
-rez_line="$(xrandr -q | grep '^Screen 0')"
-kbd_width="$(echo "$rez_line" | awk '{ print $8 }')"
-screen_height="$(echo "$rez_line" | awk '{ print $10 }' | sed -E 's/,//')"
-kbd_height=400
-
-echo "Screen rez:" $kbd_width $screen_height
-
-kbd_x=0
-kbd_y="$(echo "$screen_height - $kbd_height" | bc)"
-
-echo "Keyboard coords:" $kbd_x $kbd_y
-# Start the virtual keyboard, if it is installed.
-if type "$virtual_kbd" &> /dev/null
-then
-	if [[ "$setto" = "normal" ]]
-	then
-		# So the user reverts back to normal. Kill the virtual keyboard (if it
-		# is running), since it does not make any sense to use that any more.
-		if pgrep "$virtual_kbd" &> /dev/null
-		then
-			killall "$virtual_kbd"
-		fi
-	else
-		# The user rotated the screen. Start the virtual keyboard since he
-		# might need it.
-		$virtual_kbd -s ${kbd_width}x${kbd_height} -x ${kbd_x} -y ${kbd_y} &> /dev/null &
-
-		#onboard -s ${kbd_width}x${kbd_height} -x ${kbd_x} -y ${kbd_y}
-	fi
-fi
-
-# A little nervous about the stuff that follows ... let's not do it for now
 exit
-
-###############################################################################
-#                           TrackPoint and TouchPad                           #
-###############################################################################
-
-#echo "Enabling/Disabling TrackPoint and TouchPad..."
-#
-## Enable and disable the TrackPoint. First, find the id of the TrackPoint.
-#trackpoint_id="$(xinput list | grep TrackPoint | grep --only-matching -P 'id=(\d+)' | cut -c 4-)"
-#touchpad_id="$(xinput list | grep TouchPad | grep --only-matching -P 'id=(\d+)' | cut -c 4-)"
-#
-## Set the mode to which the input devices should be set.
-#if [[ "$setto" = "normal" ]]
-#then
-#	input_to=1
-#else
-#	input_to=0
-#fi
-#
-#for device in "$trackpoint_id" "$touchpad_id"
-#do
-#	echo "Toggling input device $device to $input_to."
-#	xinput set-prop "$device" "Device Enabled" "$input_to"
-#done
-
-echo "Executing post-hooks..."
-if [[ -f "$postrotate_hook" ]]
-then
-    "$postrotate_hook"
-fi
-

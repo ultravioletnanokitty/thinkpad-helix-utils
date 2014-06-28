@@ -1,50 +1,32 @@
 #!/bin/bash
 
-# This script toggles the state of the touchscreen device on the
-# Lenovo Helix.
-# 
-# The command takes the argument -noui to suppress notification of
-# touch device enable/disablement using UI notifications.
+# This script will toggle the capacitive digitiser on and off so that
+# the pen may be used without interference. It accepts no options, but will follow
+# the device name set in the thinkpad-helix-utils config file.
 
-use_ui=1
-if [[ $1 == "-noui" ]]; then
-	# don't show the ui elements
-	use_ui=0
+# The xinput name of the touch digitiser
+touch_name="Atmel Atmel maXTouch Digitizer touch"
+
+# Import the configuration file if there is one. This will replace any options set above.
+configfile="$HOME/.config/thinkpad-helix-utils/config"
+
+if [[ -f "$configfile" ]]; then
+	source "$configfile"
 fi
 
-# check for the device
-device="Atmel Atmel maXTouch Digitizer"
-device_found=$(xinput | grep "$device" | wc -l)
-
-if [ $device_found -ne 1 ]
-then
-	echo "touch device not found"
-	if [ $use_ui == 1 ]; then
-		kdialog ---title "Toggle Touch" --passivepopup "No touch device found." 2 
-	fi
-
+# Check for the device
+if [ $(xinput | grep "$touch_name" | wc -l) -ne 1 ]; then
+	echo "Input device $touch_name not found."
 	exit
 fi
 
-state=$(xinput list-props "$device" | grep "Device Enabled" | sed -n 's/.*\([0-9]\)$/\1/p')
-
-new_state=$(echo "1-$state" | bc)
-
-# set the new value
-xinput set-prop "$device" "Device Enabled" $new_state
-
-if [ $new_state -eq 0 ]
-then
-	echo "toggled touch off"
-
-	if [ $use_ui -eq 1 ]; then
-		kdialog --title "Toggle Touch" --passivepopup "Touch turned off." 2 
-	fi
+# Toggle digitiser state
+if [ $(xinput list-props "$touch_name" | grep "Device Enabled" | sed -n 's/.*\([0-9]\)$/\1/p') -eq 1 ]; then
+	echo "Digitiser enabled, disabling..."
+	xinput set-prop "$touch_name" "Device Enabled" 0
+	exit
 else
-	echo "toggled touch on"
-
-	if [ $use_ui -eq 1 ]; then
-		kdialog --title "Toggle Touch" --passivepopup "Touch turned on." 2 
-	fi
+	echo "Digitiser disabled, enabling..."
+	xinput set-prop "$touch_name" "Device Enabled" 1
+	exit
 fi
-

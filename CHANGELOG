@@ -1,0 +1,26 @@
+This project was originally based on: 
+	think-rotate, maintained by Martin Ueding <dev@martin-ueding.de> 
+	helix-utils, maintained by Derek Ruths <druths@networkdynamics.org>
+
+CHANGELOG
+=========
+
+v0.3
+	- Renamed project, improved grammar/wording of script output and comments
+	- Added Arch Linux PKGBUILD script
+	- Added (many) and renamed config file options, changed config file path to a less cluttery location
+	- Made config file global for all helix scripts
+	- Streamlined scripts and organised them better (especially removed tons of crufty text)
+	- Changed default behaviour of helix-rotate to cycle through all rotations
+	- Updated manpage
+	- Removed input method autolaunch for now
+	- Removed kdialog popups because we're not all on KDE
+	- Removed helix-rotate-left shortcut
+	- Relicensed under WTFPL (the original remains GPL)
+
+v0.1 (the release i forked, termed 1.0 but far from 1.0 completeness)
+	- Forked from Marin Ueding's think-rotate project on github
+	- Implemented helix-rotate script (a version of think-rotate, 
+	  but specialized to the ThinkPad Helix)
+	- Documented a tentative fix to the loss of ButtonDown 
+	  events through touchscreen.
