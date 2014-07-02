@@ -3,18 +3,8 @@
 # This script will rotate the internal display and pen/touch input devices
 # on the Lenovo ThinkPad Helix.
 #
-# Possible arguments are:
-#
-#  normal (or none)
-#  right (or cw)
-#  inverted (or half or flip)
-#  left (or ccw)
-#
-# Script orignally from http://forum.thinkpads.com/viewtopic.php?p=676101 
-# Subsequently, it was edited and improved by: 
-#      Martin Ueding <dev@martin-ueding.de>
-#      Derek Ruths <druths@networkdynamics.org>
-#      ultraviolet <ultravioletnanokitty@gmail.com>
+# Possible arguments are normal xrandr orientations:
+#      normal, left, inverted, right
 
 set -e
 
@@ -24,9 +14,6 @@ set -e
 
 # The name of the output for the internal display
 output_name="eDP1" # output used by the ThinkPad Helix's LCD
-
-# The xinput name of the touch digitiser
-touch_name="Atmel Atmel maXTouch Digitizer touch"
 
 # The rotation to toggle to if current orientation is specified
 toggle_rotation="normal"
@@ -93,38 +80,10 @@ else
 	echo "No options specified, cycling to $rotation by default"
 fi
 
-# Translate directions into ``xrandr`` and ``xsetwacom`` names.
-case "$rotation" in
-	none|normal)
-		xrandr_rotation=normal
-		touch_rotation=(1 0 0 0 1 0 0 0 1)
-		;;
-	cw|right)
-		xrandr_rotation=right
-		touch_rotation=(0 1 0 -1 0 1 0 0 1)
-		;;
-	half|inverted|flip) 
-		xrandr_rotation=inverted
-		touch_rotation=(-1 0 1 0 -1 1 0 0 1) 
-		;;
-	ccw|left)
-		xrandr_rotation=left
-		touch_rotation=(0 -1 1 1 0 0 0 0 1)
-		;;
-	*)
-		echo "Unknown direction: $rotation. Try normal, right, inverted, or left."
-		exit 2
-esac
-
 echo "Rotating screen to $rotation"
 
 # Rotate display
-xrandr --output "$output_name" --rotate "$xrandr_rotation"
-
-# Rotate capacitive digitiser
-xinput set-prop "$touch_name" 'Coordinate Transformation Matrix' ${touch_rotation[@]}
-
-# There's no need to rotate the Wacom devices - they rotate by default since they're managed by xinput.
+xrandr --output "$output_name" --rotate "$rotation"
 
 # Execute post-rotate hook
 if [[ -f "$postrotate_hook" ]]; then

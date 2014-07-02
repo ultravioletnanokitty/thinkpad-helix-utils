@@ -18,12 +18,8 @@ pkgver() {
   git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
 }
 
-build() {
-  cd "$srcdir/$pkgname"
-  make
-}
-
 package() {
   cd "$srcdir/$pkgname"
-  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -D ./helix-rotate /usr/bin/helix-rotate
+  install -D ./helix-toggle-touch /usr/bin/helix-toggle-touch
 }
