@@ -1,0 +1,9 @@
+[Desktop Entry]
+Categories=System;
+Exec=helix-toggle-touch
+GenericName=Toggle Touch
+Icon=process-stop
+Name=Toggle Touch
+StartupNotify=false
+Terminal=false
+Type=Application

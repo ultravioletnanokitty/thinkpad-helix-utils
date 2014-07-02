@@ -20,6 +20,8 @@ pkgver() {
 
 package() {
   cd "$srcdir/$pkgname"
-  install -D ./helix-rotate /usr/bin/helix-rotate
-  install -D ./helix-toggle-touch /usr/bin/helix-toggle-touch
+  install -Dm0755 ./helix-rotate "$pkgdir/usr/bin/helix-rotate"
+  install -Dm0644 ./helix-rotate.desktop "$pkgdir/usr/share/applications/helix-rotate.desktop"
+  install -Dm0755 ./helix-toggle-touch "$pkgdir/usr/bin/helix-toggle-touch"
+  install -Dm0644 ./helix-toggle-touch.desktop "$pkgdir/usr/share/applications/helix-toggle-touch.desktop"
 }
