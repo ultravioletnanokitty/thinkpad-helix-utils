@@ -8,7 +8,7 @@ arch=('i686' 'x86_64')
 url="https://github.com/ultravioletnanokitty/thinkpad-helix-utils"
 license=('WTFPL')
 depends=('xorg-xinput' 'xorg-xrandr')
-makedepends=('git' 'python-docutils')
+makedepends=('git')
 source=("$pkgname"::'git://github.com/ultravioletnanokitty/thinkpad-helix-utils.git')
 md5sums=('SKIP')
 
