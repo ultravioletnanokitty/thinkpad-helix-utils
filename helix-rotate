@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# This script will rotate the internal display and pen/touch input devices
-# on the Lenovo ThinkPad Helix.
+# A simple orientation-cycling script for use on tablets
+# 	like the Lenovo ThinkPad Helix
 #
-# Possible arguments are normal xrandr orientations:
-#      normal, left, inverted, right
+# Possible arguments are simple relative directions:
+#      left, flip, right
 
 set -e
 
@@ -14,9 +14,6 @@ set -e
 
 # The name of the output for the internal display
 output_name="eDP1" # output used by the ThinkPad Helix's LCD
-
-# The rotation to toggle to if current orientation is specified
-toggle_rotation="normal"
 
 # Define pre/post rotate hook locations
 prerotate_hook="$HOME/.config/thinkpad-helix-utils/prerotate.sh"
@@ -50,34 +47,59 @@ fi
 
 args=$@
 if [[ ${#args[@]} > 0 ]]; then
-	rotation=${args[0]}
+	direction=${args[0]}
 fi
 
-if [[ -n "$rotation" ]]; then
-	# If the specified state is the current one, toggle to specified orientation. This enables toggling rotation with one command.
-	if [[ "$orientation" = "$rotation" ]]; then
-		echo "Current orientation specified, reverting to $toggle_rotation."
-		rotation=$toggle_rotation
-	else
-		echo "Setting screen orientation to $rotation."
+if [[ -n "$direction" ]]; then
+	if [[ "$direction" = "left" ]]; then
+		case "$orientation" in
+			normal)
+				rotation=left
+				;;
+			left)
+				rotation=inverted
+				;;
+			inverted)
+				rotation=right 
+				;;
+			right)
+				rotation=normal
+				;;
+		esac
+	elif [[ "$direction" = "flip" ]]; then
+		case "$orientation" in
+			normal)
+				rotation=inverted
+				;;
+			right)
+				rotation=left
+				;;
+			inverted)
+				rotation=normal
+				;;
+			left)
+				rotation=right
+				;;
+		esac
+	elif [[ "$direction" = "right" ]]; then
+		case "$orientation" in
+			normal)
+				rotation=right
+				;;
+			right)
+				rotation=inverted
+				;;
+			inverted)
+				rotation=left 
+				;;
+			left)
+				rotation=normal
+				;;
+		esac
 	fi
 else
-	# No options were specified. Cycle orientations by default.
-	case "$orientation" in
-		normal)
-			rotation=right
-			;;
-		right)
-			rotation=inverted
-			;;
-		inverted)
-			rotation=left 
-			;;
-		left)
-			rotation=normal
-			;;
-	esac
-	echo "No options specified, cycling to $rotation by default"
+	echo "No direction specified. Try left, flip, or right."
+	exit
 fi
 
 echo "Rotating screen to $rotation"
