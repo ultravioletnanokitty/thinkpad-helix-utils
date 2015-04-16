@@ -5,7 +5,7 @@
 # the device name set in the thinkpad-helix-utils config file.
 
 # The xinput name of the touch digitiser
-touch_name="Atmel Atmel maXTouch Digitizer touch"
+touch_name="Atmel Atmel maXTouch Digitizer"
 
 # Import the configuration file if there is one. This will replace any options set above.
 configfile="$HOME/.config/thinkpad-helix-utils/config"
